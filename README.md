@@ -17,16 +17,16 @@ Smart Reading Companion is a Chrome Extension that summarizes long-form web arti
 
 ## Screenshots
 
-![Popup](images/deee3228-1ef2-4989-88f0-d284bc56f9f1.png)  
+![Popup](images/Popup.png)
 *Extension popup with global TL;DR toggle.*
 
-![Article With TL;DR Button](images/89b5de23-8085-4a70-9ae6-722857059023.png)  
+![Article with TL;DR button](images/Article%20with%20TL;DR%20button.png) 
 *Floating TL;DR button on supported pages.*
 
-![Summarizing State](images/567f58cf-197e-41b4-a6be-4da80e94b017.png)  
+![Summarizing State](images/Summarizing%20State.png)
 *In-progress summarization.*
 
-![Summary Overlay](images/a20d095f-1eb3-4368-ac3a-7962930a1779.png)  
+![Summary Overlay](images/Summary%20Overlay.png)
 *Clean, paragraph-based summary modal.*
 
 ---
