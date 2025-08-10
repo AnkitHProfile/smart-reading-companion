@@ -1,12 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>Smart Reading Companion</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Smart Reading Companion</h1>
-  <div id="content"></div>
-  <script src="popup.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Smart Reading Companion</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="src-popup">
+      <div class="hdr">Smart Reading Companion</div>
+
+      <div class="row">
+        <div>
+          <div><strong>Enable TL;DR on all sites</strong></div>
+          <div id="status" class="muted">Loading…</div>
+        </div>
+        <button id="toggle" class="src-switch" type="button" aria-pressed="false"></button>
+      </div>
+
+      <p class="muted">
+        Summary length is fixed at <strong>30%</strong> of the main article text. Ads,
+        sidebars, and related links are ignored.
+      </p>
+
+      <p class="muted">
+        Note: Turning Off hides the TL;DR button and disables summarization on every page.
+      </p>
+
+      <div class="ver">v0.1</div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
 </html>

@@ -165,6 +165,7 @@ class HFSummarizer(BaseSummarizer):
                 "num_beams": 4,             # better factuality than sampling
                 "no_repeat_ngram_size": 3,
                 "length_penalty": 1.0,
+                # Do NOT send unsupported/unknown kwargs (prevents HF 400 errors)
             },
         }
         try:
@@ -253,11 +254,57 @@ except Exception as e:
 # ---------------------------- Schemas ----------------------------
 class SummarizeRequest(BaseModel):
     text: str
-    ratio: Optional[float] = 0.10         # ~10% of original
+    ratio: Optional[float] = 0.10         # default ~10% if frontend does not set it
     level: Optional[str] = "ratio"        # "ratio" | "concise" (legacy)
     max_length: Optional[int] = None      # kept for compatibility (ignored in ratio mode)
     min_length: Optional[int] = None
     do_sample: Optional[bool] = False
+
+# ---------------------------- Formatting helpers ----------------------------
+_PARA_WS_RE = re.compile(r"[ \t]*\n[ \t]*")  # collapse crooked newlines
+
+def _paragraphize(summary: str) -> str:
+    """
+    Format a single-block abstractive summary into multiple readable paragraphs.
+
+    Strategy:
+    - Normalize whitespace.
+    - Split into sentences using the same sentence splitter.
+    - Pack 2–4 sentences per paragraph or until a soft character cap is reached.
+    """
+    if not summary:
+        return ""
+
+    text = unicodedata.normalize("NFKC", summary)
+    text = _PARA_WS_RE.sub(" ", text)
+    text = _WS_RE.sub(" ", text).strip()
+
+    sents = [s.strip() for s in _SENT_SPLIT_RE.split(text) if s.strip()]
+    if not sents:
+        return text
+
+    paras: List[str] = []
+    cur: List[str] = []
+    cur_len = 0
+    # soft char cap per paragraph keeps paragraphs balanced
+    SOFT_CAP = 480
+
+    for s in sents:
+        # ensure sentence ends with terminal punctuation
+        if not re.search(r"[.!?]$", s):
+            s = s + "."
+        if (len(cur) >= 3) or (cur_len + len(s) > SOFT_CAP and cur):
+            paras.append(" ".join(cur).strip())
+            cur = []
+            cur_len = 0
+        cur.append(s)
+        cur_len += len(s)
+
+    if cur:
+        paras.append(" ".join(cur).strip())
+
+    # join with double newlines so the frontend can render <p> blocks
+    return "\n\n".join(paras)
 
 # ---------------------------- Routes ----------------------------
 @app.get("/")
@@ -328,12 +375,12 @@ def summarize(req: SummarizeRequest):
         parts = _summarize_chunks_parallel(chunks, inter_band, bool(req.do_sample))
         combined = " ".join(parts)
         final = _summarize_band(combined, (final_min, final_max), bool(req.do_sample))
-        return {"summary": final}
+        return {"summary": _paragraphize(final)}
 
     # Short/medium: single pass directly to target band
     if level == "ratio":
         final = _summarize_band(text, (final_min, final_max), bool(req.do_sample))
-        return {"summary": final}
+        return {"summary": _paragraphize(final)}
 
     # Legacy 'concise' path (still enforces final pass)
     plan = ChunkingPlan(chunk_chars=1400, overlap=120)
@@ -342,4 +389,4 @@ def summarize(req: SummarizeRequest):
     per_chunk = _summarize_chunks_parallel(chunks, inter_band, bool(req.do_sample))
     combined = " ".join(per_chunk) if len(per_chunk) > 1 else per_chunk[0]
     final = _summarize_band(combined, (final_min, final_max), bool(req.do_sample))
-    return {"summary": final}
+    return {"summary": _paragraphize(final)}
