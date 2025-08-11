@@ -60,10 +60,10 @@ smart-reading-companion/
 ├── popup.js
 ├── style.css
 ├── manifest.json
-├── deee3228-1ef2-4989-88f0-d284bc56f9f1.png
-├── 89b5de23-8085-4a70-9ae6-722857059023.png
-├── 567f58cf-197e-41b4-a6be-4da80e94b017.png
-└── a20d095f-1eb3-4368-ac3a-7962930a1779.png
+├── icon16.png
+├── icon32.png
+├── icon48.png
+└── icon128.png
 
 ```
 
