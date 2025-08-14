@@ -1,6 +1,6 @@
 # Smart Reading Companion
 
-Smart Reading Companion is a Chrome Extension that summarizes long-form web articles into clean, structured paragraphs. It extracts the main content (ignoring ads, sidebars, and related links) and produces a concise summary—targeting about **30%** of the article length—so you can understand the key ideas quickly.
+Smart Reading Companion is a Chrome Extension that summarizes long-form web articles into clean, structured paragraphs. It extracts the main content (ignoring ads, sidebars, and related links) and produces a concise summary, targeting about **30%** of the article length, so you can understand the key ideas quickly.
 
 ---
 
